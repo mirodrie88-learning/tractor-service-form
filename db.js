@@ -5,7 +5,7 @@ class TractorServiceDatabase {
     constructor() {
         this.dbName = 'TractorServiceDB';
         this.storeName = 'services';
-        this.version = 1;
+        this.version = 2; // Incremented version to support unique VIN index
         this.db = null;
     }
 
@@ -35,11 +35,23 @@ class TractorServiceDatabase {
                     });
 
                     // Create indexes for better querying
-                    objectStore.createIndex('tractorId', 'tractorId', { unique: false });
+                    // VIN is now unique to prevent duplicate tractors
+                    objectStore.createIndex('tractorId', 'tractorId', { unique: true });
                     objectStore.createIndex('serviceDate', 'serviceDate', { unique: false });
                     objectStore.createIndex('serviceType', 'serviceType', { unique: false });
                     
-                    console.log('Database setup complete');
+                    console.log('Database setup complete with unique VIN index');
+                } else {
+                    // Handle schema upgrade for existing databases
+                    const objectStore = event.target.transaction.objectStore(this.storeName);
+                    try {
+                        // Remove old index if it exists
+                        objectStore.deleteIndex('tractorId');
+                    } catch (e) {
+                        // Index might not exist, that's okay
+                    }
+                    // Create new unique index
+                    objectStore.createIndex('tractorId', 'tractorId', { unique: true });
                 }
             };
         });
@@ -66,7 +78,15 @@ class TractorServiceDatabase {
 
             request.onerror = () => {
                 console.error('Error adding service:', request.error);
-                reject(request.error);
+                
+                // Check if error is due to duplicate VIN
+                if (request.error.name === 'ConstraintError') {
+                    const error = new Error('This VIN already exists in the database');
+                    error.name = 'VINError';
+                    reject(error);
+                } else {
+                    reject(request.error);
+                }
             };
         });
     }
@@ -92,7 +112,7 @@ class TractorServiceDatabase {
         });
     }
 
-    // Get services by tractor ID
+    // Get services by tractor VIN
     async getServicesByTractorId(tractorId) {
         return new Promise((resolve, reject) => {
             const transaction = this.db.transaction([this.storeName], 'readonly');
@@ -105,7 +125,7 @@ class TractorServiceDatabase {
             };
 
             request.onerror = () => {
-                console.error('Error retrieving services by tractor ID:', request.error);
+                console.error('Error retrieving services by tractor VIN:', request.error);
                 reject(request.error);
             };
         });
