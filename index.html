@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tractor Service Form</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-wrapper">
+            <h1>Tractor Service Form</h1>
+            <form id="tractorServiceForm">
+                <div class="form-group">
+                    <label for="tractorId">Tractor ID:</label>
+                    <input type="text" id="tractorId" name="tractorId" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="tractorModel">Tractor Model:</label>
+                    <input type="text" id="tractorModel" name="tractorModel" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="serviceType">Service Type:</label>
+                    <select id="serviceType" name="serviceType" required>
+                        <option value="">-- Select Service Type --</option>
+                        <option value="maintenance">Maintenance</option>
+                        <option value="repair">Repair</option>
+                        <option value="inspection">Inspection</option>
+                        <option value="cleaning">Cleaning</option>
+                        <option value="oilChange">Oil Change</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="serviceDate">Service Date:</label>
+                    <input type="date" id="serviceDate" name="serviceDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="technicianName">Technician Name:</label>
+                    <input type="text" id="technicianName" name="technicianName" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Service Description:</label>
+                    <textarea id="description" name="description" rows="4" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="kilometers">Kilometers of Transport:</label>
+                    <input type="number" id="kilometers" name="kilometers" step="0.1" min="0" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="cost">Service Cost ($):</label>
+                    <input type="number" id="cost" name="cost" step="0.01" min="0" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="hoursWorked">Hours Worked:</label>
+                    <input type="number" id="hoursWorked" name="hoursWorked" step="0.5" min="0" required>
+                </div>
+
+                <button type="submit" class="btn-submit">Submit Service Form</button>
+                <button type="reset" class="btn-reset">Clear Form</button>
+            </form>
+
+            <div id="successMessage" class="success-message" style="display: none;">
+                ✓ Service form submitted successfully!
+            </div>
+            <div id="errorMessage" class="error-message" style="display: none;">
+                ✗ Error submitting form. Please try again.
+            </div>
+        </div>
+
+        <div class="records-wrapper">
+            <h2>Service Records</h2>
+            <div id="recordsContainer" class="records-container">
+                <p class="no-records">No service records yet.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="db.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
